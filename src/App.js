@@ -11,13 +11,17 @@ const Title = StyledComponent.div`
   position:fixed;
   top:0px;
   left:0px;
-  text-align:center;
-  color:white;
+  color:black;
+  background-color:rgba(255,255,255,0.9);
+  border-bottom-right-radius: 8px;
 `;
 
 class App extends Component {
     constructor(){
         super();
+        this.state = {
+          status: "Starting up...",
+        }
         this.map = new SFBusMap();
         this.busService = new BusService()
     }
@@ -30,18 +34,21 @@ class App extends Component {
     }
 
     componentDidMount(){
-
+      this.setState({status: "Intializing map..."});
         Promise.all([
             this.busService.getRoutes(),
             this.map.init()
         ])
         .then(([lines,]) => {
+          this.setState({status: "Getting bus locations..."});
           this.setState({lines});
           return this.busService.getBusLocations(lines.map(obj => obj.$.tag));
         })
         .then(busses => {
+            this.setState({status: "Adding busses to map..."});
             this.map.updateBusses(busses);
         }).then(()=>{
+          this.setState({status: "Ready."});
           this.refreshCycle(()=>{
             this.busService.getBusLocations(this.state.lines.map(obj => obj.$.tag)).then(busses =>{
               this.map.updateBusses(busses)
@@ -49,14 +56,23 @@ class App extends Component {
           },3000);
         });
     }
-    //http://webservices.nextbus.com/service/publicXMLFeed?command=vehicleLocations&a=sf-muni&r=N&t=0
-    //http://webservices.nextbus.com/service/publicXMLFeed?command=routeList&a=sf-muni
   render() {
     return (
       <Title>
         <h1>Live Busses of San Francisco</h1>
-        <h3>Created by Matthew Linkous</h3>
-        <h5><a href="https://github.com/matlin/SF-Live-Bus-Map">Fork me on Github</a></h5>
+        <a href="https://github.com/matlin/SF-Live-Bus-Map"><h3>
+          <img src="https://cdn0.iconfinder.com/data/icons/octicons/1024/mark-github-256.png" width="25px" height="25px" />
+            Matthew Linkous
+        </h3></a>
+        <h5>Status: <strong style={{color:"darkred"}}>{this.state.status}</strong></h5>
+        <h5>Todos:</h5>
+        <ul>
+          <li>loading status</li>
+          <li>toggling bus lines via state</li>
+          <li>composing components more safely</li>
+          <li>adding tooltips to busses and roads</li>
+          <li>removing dead code and clean up repo</li>
+        </ul>
       </Title>
     );
   }

@@ -7,7 +7,6 @@ class BusService {
         this.baseUrl = "http://webservices.nextbus.com/service/publicXMLFeed";
         this.url=this.baseUrl + `?a=${this.agency}`;
     }
-    //static baseUrl = "http://webservices.nextbus.com/service/publicXMLFeed";
 
     async getRoutes() {
       const params = {command: "routeList"};
