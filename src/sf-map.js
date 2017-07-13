@@ -147,7 +147,7 @@ class SFBusMap {
     //   .style("fill", "red");
     const busses = this.mapLayer
       .selectAll("image")
-      .data(data,(d) => d.$.id);
+      .data(data.filter(obj => !!obj),d => d.$.id);
     busses.exit().remove();
 
     busses.transition().duration(500)

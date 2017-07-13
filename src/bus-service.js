@@ -9,13 +9,14 @@ class BusService {
     }
     //static baseUrl = "http://webservices.nextbus.com/service/publicXMLFeed";
 
-    getRoutes() {
-
+    async getRoutes() {
+      const params = {command: "routeList"};
+      return this.fetchData(params).then(xmlObj => xmlObj.body.route);
     }
 
     async getBusLocations(lines = []) {
         return Promise.all(lines.map((line) => this.fetchData({command:"vehicleLocations", t:0, r:line}))).then(lineObjs => {
-            console.log(lineObjs);
+            //console.log(lineObjs);
             return lineObjs.reduce((acc, curr) => acc.concat(curr.body.vehicle), [])
         }, console.error);
     }

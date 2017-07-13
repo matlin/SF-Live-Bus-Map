@@ -3,6 +3,17 @@ import logo from './logo.svg';
 import './App.css';
 import SFBusMap from './sf-map.js';
 import BusService from './bus-service.js';
+import StyledComponent from 'styled-components';
+
+const Title = StyledComponent.div`
+  display:inline-block;
+  padding:10px;
+  position:fixed;
+  top:0px;
+  left:0px;
+  text-align:center;
+  color:white;
+`;
 
 class App extends Component {
     constructor(){
@@ -19,14 +30,20 @@ class App extends Component {
     }
 
     componentDidMount(){
+
         Promise.all([
-            this.busService.getBusLocations(['N', 'L']),
+            this.busService.getRoutes(),
             this.map.init()
-        ]).then(([busses,]) => {
+        ])
+        .then(([lines,]) => {
+          this.setState({lines});
+          return this.busService.getBusLocations(lines.map(obj => obj.$.tag));
+        })
+        .then(busses => {
             this.map.updateBusses(busses);
         }).then(()=>{
           this.refreshCycle(()=>{
-            this.busService.getBusLocations(['N', 'L']).then(busses =>{
+            this.busService.getBusLocations(this.state.lines.map(obj => obj.$.tag)).then(busses =>{
               this.map.updateBusses(busses)
             });
           },3000);
@@ -36,7 +53,11 @@ class App extends Component {
     //http://webservices.nextbus.com/service/publicXMLFeed?command=routeList&a=sf-muni
   render() {
     return (
-      <div></div>
+      <Title>
+        <h1>Live Busses of San Francisco</h1>
+        <h3>Created by Matthew Linkous</h3>
+        <h5><a href="https://github.com/matlin/SF-Live-Bus-Map">Fork me on Github</a></h5>
+      </Title>
     );
   }
 }
