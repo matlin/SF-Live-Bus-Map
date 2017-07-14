@@ -4,8 +4,8 @@ import * as XMLParser from 'xml2js';
 class BusService {
     constructor(agency = "sf-muni"){
         this.agency = agency;
-        this.proxy = "https://crossorigin.me/";
-        this.baseUrl = this.proxy + "http://webservices.nextbus.com/service/publicXMLFeed";
+        //this.proxy = "https://crossorigin.me/";
+        this.baseUrl = "http://webservices.nextbus.com/service/publicXMLFeed";
         this.url=this.baseUrl + `?a=${this.agency}`;
     }
 
