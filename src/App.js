@@ -21,7 +21,11 @@ class App extends Component {
         super();
         this.state = {
           status: "Starting up...",
+          routes: [],
+          buses: [],
+          ready: false,
         }
+        this.refreshRate = 15000;
         this.map = new SFBusMap();
         this.busService = new BusService()
     }
@@ -41,22 +45,29 @@ class App extends Component {
         ])
         .then(([lines,]) => {
           this.setState({status: "Getting bus locations..."});
-          this.setState({lines});
+          this.setState({routes: lines});
           return this.busService.getBusLocations(lines.map(obj => obj.$.tag));
         })
         .then(buses => {
-            this.setState({status: "Adding buses to map..."});
-            this.map.updatebuses(buses);
+            this.setState({status: "Adding buses to map...", buses});
+            //this.map.updatebuses(buses);
         }).then(()=>{
-          this.setState({status: "Ready."});
+          this.setState({status: "Ready.", ready: true});
           this.refreshCycle(()=>{
-            this.busService.getBusLocations(this.state.lines.map(obj => obj.$.tag)).then(buses =>{
-              this.map.updatebuses(buses)
+            this.busService.getBusLocations(this.state.routes.map(obj => obj.$.tag)).then(buses =>{
+              //this.map.updatebuses(buses);
+              this.setState({buses});
             });
-          },3000);
+          },this.refreshRate);
         });
     }
   render() {
+    //filter needs to be more efficient.
+    if (this.state.ready){
+        console.log(this.state.routes.map(route => route.$.tag));
+        console.log(this.state.buses.filter(bus => !!bus && this.state.routes.map(route => route.$.tag).indexOf(bus.$.routeTag) !== -1));
+        this.map.updatebuses(this.state.buses.filter(bus => !!bus && this.state.routes.map(route => route.$.tag).indexOf(bus.$.routeTag) !== -1));
+    }
     return (
       <Title>
         <h1>Live buses of San Francisco</h1>
@@ -67,7 +78,7 @@ class App extends Component {
         <h5>Status: <strong style={{color:"darkred"}}>{this.state.status}</strong></h5>
         <h5>Todos:</h5>
         <ul>
-          <li>loading status</li>
+          <del><li>loading status</li></del>
           <li>toggling bus lines via state</li>
           <li>composing components more safely</li>
           <li>adding tooltips to buses and roads</li>

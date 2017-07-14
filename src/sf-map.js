@@ -4,8 +4,8 @@ import * as d3 from "d3";
 class SFBusMap {
   constructor(nodeRef) {
     this.nodeRef = nodeRef;
-    this.busHeight = 60;
-    this.busWidth = 20;
+    this.busHeight = 30;
+    this.busWidth = 10;
     this.mapLayer = null;
   }
 
@@ -16,8 +16,6 @@ class SFBusMap {
       height = window.outerHeight,
       ogScale = 150000,
       centered;
-
-    console.log(d3);
 
     // Define color scale
     let color = d3
@@ -34,7 +32,7 @@ class SFBusMap {
 
     const zoomed = (a, b, node) => {
       const trans = d3.event.transform;
-      console.log(trans.y);
+      console.log(trans.toString());
       this.mapLayer.attr("transform", trans);
       this.mapLayer
         .selectAll("image")
@@ -135,23 +133,12 @@ class SFBusMap {
   }
 
   updatebuses(data) {
-    // this.mapLayer
-    //   .selectAll("circle")
-    //   .data(data)
-    //   .enter()
-    //   .append("circle")
-    //   //.transition()
-    //   .attr("transform", d => `rotate(${+d.$.heading})`)
-    //   .attr("cx", d => this.projection([+d.$.lon, +d.$.lat])[0])
-    //   .attr("cy", d => this.projection([+d.$.lon, +d.$.lat])[1])
-    //   .attr("r", 6)
-    //   .style("fill", "red");
     const buses = this.mapLayer
       .selectAll("image")
-      .data(data.filter(obj => !!obj),d => d.$.id);
+      .data(data, d => d.$.id);
     buses.exit().remove();
 
-    buses.transition().duration(500)
+    buses.transition().duration(800)
     .attr(
       "transform",
       d =>
@@ -173,10 +160,8 @@ class SFBusMap {
           ])[0]}, ${this.projection([+d.$.lon, +d.$.lat])[1]}) rotate(${+d.$
             .heading})`
       )
-      //.attr("x", d => this.projection([+d.$.lon, +d.$.lat])[0])
-      //.attr("y", d => this.projection([+d.$.lon, +d.$.lat])[1])
-      .attr("width", this.busHeight)
-      .attr("height", this.busWidth);
+      .attr("width", this.busHeight * 1.1)
+      .attr("height", this.busWidth * 1.1);
   }
 }
 
