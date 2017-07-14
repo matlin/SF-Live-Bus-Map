@@ -4,7 +4,8 @@ import * as XMLParser from 'xml2js';
 class BusService {
     constructor(agency = "sf-muni"){
         this.agency = agency;
-        this.baseUrl = "http://webservices.nextbus.com/service/publicXMLFeed";
+        this.proxy = "https://ssl-proxy.my-addr.org/myaddrproxy.php/";
+        this.baseUrl = this.proxy + "http://webservices.nextbus.com/service/publicXMLFeed";
         this.url=this.baseUrl + `?a=${this.agency}`;
     }
 
@@ -15,7 +16,6 @@ class BusService {
 
     async getBusLocations(lines = []) {
         return Promise.all(lines.map((line) => this.fetchData({command:"vehicleLocations", t:0, r:line}))).then(lineObjs => {
-            //console.log(lineObjs);
             return lineObjs.reduce((acc, curr) => acc.concat(curr.body.vehicle), [])
         }, console.error);
     }

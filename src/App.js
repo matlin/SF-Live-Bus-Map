@@ -44,14 +44,14 @@ class App extends Component {
           this.setState({lines});
           return this.busService.getBusLocations(lines.map(obj => obj.$.tag));
         })
-        .then(busses => {
-            this.setState({status: "Adding busses to map..."});
-            this.map.updateBusses(busses);
+        .then(buses => {
+            this.setState({status: "Adding buses to map..."});
+            this.map.updatebuses(buses);
         }).then(()=>{
           this.setState({status: "Ready."});
           this.refreshCycle(()=>{
-            this.busService.getBusLocations(this.state.lines.map(obj => obj.$.tag)).then(busses =>{
-              this.map.updateBusses(busses)
+            this.busService.getBusLocations(this.state.lines.map(obj => obj.$.tag)).then(buses =>{
+              this.map.updatebuses(buses)
             });
           },3000);
         });
@@ -59,7 +59,7 @@ class App extends Component {
   render() {
     return (
       <Title>
-        <h1>Live Busses of San Francisco</h1>
+        <h1>Live buses of San Francisco</h1>
         <a href="https://github.com/matlin/SF-Live-Bus-Map"><h3>
           <img src="https://cdn0.iconfinder.com/data/icons/octicons/1024/mark-github-256.png" width="25px" height="25px" />
             Matthew Linkous
@@ -70,7 +70,7 @@ class App extends Component {
           <li>loading status</li>
           <li>toggling bus lines via state</li>
           <li>composing components more safely</li>
-          <li>adding tooltips to busses and roads</li>
+          <li>adding tooltips to buses and roads</li>
           <li>removing dead code and clean up repo</li>
         </ul>
       </Title>

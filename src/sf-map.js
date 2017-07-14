@@ -34,6 +34,7 @@ class SFBusMap {
 
     const zoomed = (a, b, node) => {
       const trans = d3.event.transform;
+      console.log(trans.y);
       this.mapLayer.attr("transform", trans);
       this.mapLayer
         .selectAll("image")
@@ -133,7 +134,7 @@ class SFBusMap {
     function clicked() {}
   }
 
-  updateBusses(data) {
+  updatebuses(data) {
     // this.mapLayer
     //   .selectAll("circle")
     //   .data(data)
@@ -145,12 +146,12 @@ class SFBusMap {
     //   .attr("cy", d => this.projection([+d.$.lon, +d.$.lat])[1])
     //   .attr("r", 6)
     //   .style("fill", "red");
-    const busses = this.mapLayer
+    const buses = this.mapLayer
       .selectAll("image")
       .data(data.filter(obj => !!obj),d => d.$.id);
-    busses.exit().remove();
+    buses.exit().remove();
 
-    busses.transition().duration(500)
+    buses.transition().duration(500)
     .attr(
       "transform",
       d =>
@@ -161,7 +162,7 @@ class SFBusMap {
           .heading})`
     )
 
-    busses.enter().append("image")
+    buses.enter().append("image")
       .attr("xlink:href", "../bus.png")
       .attr(
         "transform",
